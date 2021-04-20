@@ -1,25 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_std_mgmt/screens/common-utils.dart';
 import 'package:flutter_std_mgmt/screens/login-screen.dart';
 import 'package:flutter_std_mgmt/screens/student-list.dart';
 import 'package:oktoast/oktoast.dart';
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  Widget _defaultHome = new LoginScreen();
+
+  // Get result of the login function.
+  bool _result = await CommonUtils.getVal("login");
+  print("hello" + _result.toString());
+  if (_result != null && _result) {
+    _defaultHome = new MyHomePage(
+      title: "Home",
+    );
+  }
+  runApp(MyApp(
+    def: _defaultHome,
+  ));
 }
 
 class MyApp extends StatelessWidget {
+  final Widget def;
+  MyApp({this.def});
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return OKToast(
       child: MaterialApp(
-        title: 'STUDENT MANAGEMENT',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.green,
-        ),
-        home: LoginScreen(),
-      ),
+          title: 'STUDENT MANAGEMENT',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.green,
+          ),
+          home: this.def),
     );
   }
 }
@@ -47,6 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var drwSel = 0;
   @override
   Widget build(BuildContext context) {
+    CommonUtils.checkForLogin(context);
     return Scaffold(
       drawer: Drawer(
           child: ListView(children: [

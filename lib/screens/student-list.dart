@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_std_mgmt/screens/common-utils.dart';
+import 'package:flutter_std_mgmt/screens/login-screen.dart';
 
 class StudentList extends StatefulWidget {
   @override
@@ -44,19 +46,19 @@ class _StudentListState extends State<StudentList> {
   Color hoverColor = Color(0xfff1f1f1);
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     litems.add(stu);
     litems.add(stu2);
+    CommonUtils.checkForLogin(context);
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Color(0xff489689),
         leadingWidth: 20,
-        // shape: RoundedRectangleBorder(
-        //   borderRadius: BorderRadius.vertical(
-        //     top: Radius.circular(30),
-        //     bottom: Radius.circular(30),
-        //   ),
-        // ),
         bottomOpacity: 2.0,
         backgroundColor: Color(0xff489689),
         title: Row(
@@ -68,7 +70,9 @@ class _StudentListState extends State<StudentList> {
               //   color: Colors.green,
               // child:
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  CommonUtils.storage.clear();
+                },
                 child: Row(
                     children: [Icon(Icons.control_point), Text("Add Student")]),
                 // ),

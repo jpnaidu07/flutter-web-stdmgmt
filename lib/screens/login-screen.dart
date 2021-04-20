@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_std_mgmt/main.dart';
+import 'package:flutter_std_mgmt/screens/common-utils.dart';
 import 'package:oktoast/oktoast.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -66,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 obscureText: true,
                                 keyboardType: TextInputType.text,
                                 validator: (item) {
-                                  return item.length > 6
+                                  return item.length > 0
                                       ? null
                                       : "Password must be 6 characters";
                                 },
@@ -111,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   bool validateCred(String email, String password) {
-    return _email == "admin@yopmail.com" && _password == "admin123";
+    return _email == "@" && _password == "a";
   }
 
   void login() {
@@ -131,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
           radius: 13.0,
           textStyle: TextStyle(fontSize: 18.0),
         );
-
+        CommonUtils.setLogin(true);
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (_) => MyHomePage(title: 'HOME')),
@@ -147,27 +148,5 @@ class _LoginScreenState extends State<LoginScreen> {
         textStyle: TextStyle(fontSize: 18.0),
       );
     }
-    // FirebaseAuth.instance
-    //     .signInWithEmailAndPassword(email: _email, password: _password)
-    //     .then((user) async {
-    //   // sign up
-    //   setState(() {
-    //     isLoading = false;
-    //   });
-
-    //   Fluttertoast.showToast(msg: "Login Success");
-
-    //   await FirebaseUtils.updateFirebaseToken();
-
-    //   Navigator.pushAndRemoveUntil(
-    //       context,
-    //       MaterialPageRoute(builder: (_) => HomeScreen()),
-    //       (Route<dynamic> route) => false);
-    // }).catchError((onError) {
-    //   setState(() {
-    //     isLoading = false;
-    //   });
-    //   Fluttertoast.showToast(msg: "error " + onError.toString());
-    // });
   }
 }
