@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_std_mgmt/screens/login-screen.dart';
 import 'package:flutter_std_mgmt/screens/student-list.dart';
+import 'package:oktoast/oktoast.dart';
 
 void main() {
   runApp(MyApp());
@@ -9,13 +11,15 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'STUDENT MANAGEMENT',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.green,
+    return OKToast(
+      child: MaterialApp(
+        title: 'STUDENT MANAGEMENT',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.green,
+        ),
+        home: LoginScreen(),
       ),
-      home: MyHomePage(title: 'HOME'),
     );
   }
 }
@@ -93,6 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: _getDrawerItemWidget(drwSel),
+      // body: LoginScreen(),
 // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
