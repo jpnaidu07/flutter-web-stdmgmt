@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_std_mgmt/screens/common-utils.dart';
 import 'package:flutter_std_mgmt/screens/login-screen.dart';
+import 'package:flutter_std_mgmt/screens/new-student.dart';
 
 class StudentList extends StatefulWidget {
   @override
@@ -8,6 +9,7 @@ class StudentList extends StatefulWidget {
 }
 
 List<Student> litems = [];
+List<Student> originalList = [];
 
 class Student {
   int id;
@@ -26,19 +28,11 @@ class Student {
   }
 }
 
-Student stu = new Student(
-    id: 12,
-    fname: "fnafddfdsfdsfsdfdsfdfds",
-    lname: "lname",
-    email: "dsdfd",
-    phone: 3224332);
+Student stu =
+    new Student(id: 12, fname: "abc", lname: "xyz", email: "@o", phone: 1234);
 
-Student stu2 = new Student(
-    id: 12,
-    fname: "fnafddfdsfdsf",
-    lname: "lname",
-    email: "dsdfd",
-    phone: 3224332);
+Student stu2 =
+    new Student(id: 12, fname: "def", lname: "tuv", email: "@h", phone: 567);
 
 final TextEditingController eCtrl = new TextEditingController();
 
@@ -48,12 +42,13 @@ class _StudentListState extends State<StudentList> {
   @override
   void initState() {
     super.initState();
+    litems.add(stu);
+    litems.add(stu2);
+    originalList.addAll(litems);
   }
 
   @override
   Widget build(BuildContext context) {
-    litems.add(stu);
-    litems.add(stu2);
     CommonUtils.checkForLogin(context);
     return Scaffold(
       appBar: AppBar(
@@ -71,7 +66,10 @@ class _StudentListState extends State<StudentList> {
               // child:
               ElevatedButton(
                 onPressed: () {
-                  CommonUtils.storage.clear();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => NewStudent()),
+                  );
                 },
                 child: Row(
                     children: [Icon(Icons.control_point), Text("Add Student")]),
@@ -95,10 +93,30 @@ class _StudentListState extends State<StudentList> {
                     height: 50,
                     width: 200.0,
                     child: TextField(
+                      controller: eCtrl,
                       style: TextStyle(
-                        fontSize: 20.0,
+                        fontSize: 15.0,
                         color: Colors.black,
                       ),
+                      onChanged: (value) {
+                        print("Helo  " + value);
+                        if (value.length > 0) {
+                          List<Student> modItems = originalList
+                              .where((item) => (item.fname.contains(value) ||
+                                  item.lname.contains(value) ||
+                                  item.email.contains(value) ||
+                                  item.phone.toString().contains(value)))
+                              .toList();
+                          setState(() {
+                            litems = modItems;
+                          });
+                        } else {
+                          print("hello else");
+                          setState(() {
+                            litems = originalList;
+                          });
+                        }
+                      },
                       decoration: InputDecoration(
                           contentPadding: EdgeInsets.only(bottom: 1),
                           border: OutlineInputBorder(),

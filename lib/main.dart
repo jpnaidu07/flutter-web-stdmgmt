@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_std_mgmt/screens/client.dart';
 import 'package:flutter_std_mgmt/screens/common-utils.dart';
 import 'package:flutter_std_mgmt/screens/login-screen.dart';
 import 'package:flutter_std_mgmt/screens/student-list.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:oktoast/oktoast.dart';
 
 void main() async {
   Widget _defaultHome = new LoginScreen();
 
   // Get result of the login function.
-  bool _result = await CommonUtils.getVal("login");
+  bool _result = await CommonUtils.getData();
   print("hello" + _result.toString());
   if (_result != null && _result) {
     _defaultHome = new MyHomePage(
@@ -27,13 +29,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OKToast(
-      child: MaterialApp(
-          title: 'STUDENT MANAGEMENT',
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            primarySwatch: Colors.green,
-          ),
-          home: this.def),
+      child: GraphQLProvider(
+        client: Config.initailizeClient("abc"),
+        child: MaterialApp(
+            title: 'STUDENT MANAGEMENT',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              primarySwatch: Colors.green,
+            ),
+            home: this.def),
+      ),
     );
   }
 }
@@ -109,11 +114,17 @@ class _MyHomePageState extends State<MyHomePage> {
         )
       ])),
       appBar: AppBar(
+        actions: [
+          IconButton(
+              icon: Icon(Icons.logout),
+              onPressed: () {
+                CommonUtils.storage.clear();
+                setState(() {});
+              }),
+        ],
         title: Text(widget.title),
       ),
       body: _getDrawerItemWidget(drwSel),
-      // body: LoginScreen(),
-// This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

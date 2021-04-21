@@ -25,8 +25,11 @@ dependencies:
     sdk: flutter
   flutter_login: ^1.1.0
   oktoast: ^3.0.0
-  # shared_preferences: ^2.0.5
-  localstorage: ^4.0.0+1
+  localstorage: 3.0.0+1
+  graphql_flutter: ^4.0.1
+  shared_preferences: ^0.5.7+3
+  http: ^0.12.1
+  toast: ^0.1.5
 
 
   # The following adds the Cupertino Icons font to your application.
