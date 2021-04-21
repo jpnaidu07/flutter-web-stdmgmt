@@ -7,6 +7,8 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:oktoast/oktoast.dart';
 
 void main() async {
+  await initHiveForFlutter();
+  WidgetsFlutterBinding.ensureInitialized();
   Widget _defaultHome = new LoginScreen();
 
   // Get result of the login function.

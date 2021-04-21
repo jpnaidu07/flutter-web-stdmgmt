@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class Config {
-  static final HttpLink httpLink = HttpLink('http://localhost:8085/v1/graphql');
+  static final HttpLink httpLink =
+      HttpLink('http://192.168.0.101:8085/v1/graphql');
   static String _token;
   static final AuthLink authLink = AuthLink(getToken: () => _token);
   static final WebSocketLink websocketLink = WebSocketLink(
-    'wss://localhost:8085/v1/graphql',
+    'wss://192.168.0.101:8085/v1/graphql',
     config: SocketClientConfig(
       autoReconnect: true,
       inactivityTimeout: Duration(seconds: 30),

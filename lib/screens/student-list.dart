@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_std_mgmt/screens/common-utils.dart';
 import 'package:flutter_std_mgmt/screens/login-screen.dart';
 import 'package:flutter_std_mgmt/screens/new-student.dart';
+import 'package:flutter_std_mgmt/screens/queries.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 class StudentList extends StatefulWidget {
   @override
@@ -10,6 +12,14 @@ class StudentList extends StatefulWidget {
 
 List<Student> litems = [];
 List<Student> originalList = [];
+
+var refetchQuery;
+
+var fnamefilter;
+
+var studList;
+
+var queryOptions = studList;
 
 class Student {
   int id;
@@ -22,17 +32,11 @@ class Student {
     return Student(
         id: map["id"],
         fname: map["fname"],
-        lname: map["id"],
-        email: map["fname"],
+        lname: map["lname"],
+        email: map["email"],
         phone: map["phone"]);
   }
 }
-
-Student stu =
-    new Student(id: 12, fname: "abc", lname: "xyz", email: "@o", phone: 1234);
-
-Student stu2 =
-    new Student(id: 12, fname: "def", lname: "tuv", email: "@h", phone: 567);
 
 final TextEditingController eCtrl = new TextEditingController();
 
@@ -42,13 +46,25 @@ class _StudentListState extends State<StudentList> {
   @override
   void initState() {
     super.initState();
-    litems.add(stu);
-    litems.add(stu2);
-    originalList.addAll(litems);
   }
 
   @override
   Widget build(BuildContext context) {
+    var studListFilter = QueryOptions(
+      document: gql(Queries
+          .studentListFilter), // this is the query string you just created
+      pollInterval: Duration(seconds: 10),
+      variables: {
+        "_fname": fnamefilter,
+      },
+    );
+
+    studList = QueryOptions(
+      document:
+          gql(Queries.studentList), // this is the query string you just created
+      pollInterval: Duration(seconds: 10),
+    );
+
     CommonUtils.checkForLogin(context);
     return Scaffold(
       appBar: AppBar(
@@ -61,9 +77,6 @@ class _StudentListState extends State<StudentList> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Text("Students List"),
-              // Container(
-              //   color: Colors.green,
-              // child:
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -80,8 +93,6 @@ class _StudentListState extends State<StudentList> {
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(children: [
-          // Expanded(
-          // child:
           Container(
             child: Row(
               children: [
@@ -99,21 +110,15 @@ class _StudentListState extends State<StudentList> {
                         color: Colors.black,
                       ),
                       onChanged: (value) {
-                        print("Helo  " + value);
                         if (value.length > 0) {
-                          List<Student> modItems = originalList
-                              .where((item) => (item.fname.contains(value) ||
-                                  item.lname.contains(value) ||
-                                  item.email.contains(value) ||
-                                  item.phone.toString().contains(value)))
-                              .toList();
                           setState(() {
-                            litems = modItems;
+                            fnamefilter = "%" + value + "%";
+                            print("Filter  " + value);
+                            queryOptions = studListFilter;
                           });
                         } else {
-                          print("hello else");
                           setState(() {
-                            litems = originalList;
+                            queryOptions = studList;
                           });
                         }
                       },
@@ -127,65 +132,152 @@ class _StudentListState extends State<StudentList> {
           ),
           // ),
           //
+          //
+          //
+          //
+          //
+          Query(
+            options: queryOptions,
+            // Just like in apollo refetch() could be used to manually trigger a refetch
+            // while fetchMore() can be used for pagination purpose
+            builder: (QueryResult result,
+                {VoidCallback refetch, FetchMore fetchMore}) {
+              // refetchQuery = refetch;
+              if (result.hasException) {
+                return Text(result.exception.toString());
+              }
 
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: DataTable(
-              columns: const <DataColumn>[
-                DataColumn(
-                  label: Text(
-                    'Sr No',
-                    style: TextStyle(fontStyle: FontStyle.italic),
-                  ),
+              if (result.isLoading) {
+                return Text('Loading');
+              }
+
+              // it can be either Map or List
+              print("Hello Results" + result.data["studs"].toString());
+              List resp = result.data["studs"];
+              litems.clear();
+              litems
+                  .addAll(resp.map((item) => Student.fromJson(item)).toList());
+              originalList = litems;
+
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: DataTable(
+                  columns: const <DataColumn>[
+                    DataColumn(
+                      label: Text(
+                        'Sr No',
+                        style: TextStyle(fontStyle: FontStyle.italic),
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        'FirstName',
+                        style: TextStyle(fontStyle: FontStyle.italic),
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        'LastName',
+                        style: TextStyle(fontStyle: FontStyle.italic),
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        'Email',
+                        style: TextStyle(fontStyle: FontStyle.italic),
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        'Phone',
+                        style: TextStyle(fontStyle: FontStyle.italic),
+                      ),
+                    ),
+                  ],
+                  rows: litems
+                      .map(
+                        (student) => DataRow(
+                            // onSelectChanged: (b) {
+                            //   print(student.id);
+                            // },
+                            cells: [
+                              DataCell(Text(student.id.toString())),
+                              DataCell(
+                                Text(student.fname),
+                              ),
+                              DataCell(Text(student.lname)),
+                              DataCell(
+                                Text(student.email),
+                              ),
+                              DataCell(
+                                Text(student.phone.toString()),
+                              ),
+                            ]),
+                      )
+                      .toList(),
                 ),
-                DataColumn(
-                  label: Text(
-                    'FirstName',
-                    style: TextStyle(fontStyle: FontStyle.italic),
-                  ),
-                ),
-                DataColumn(
-                  label: Text(
-                    'LastName',
-                    style: TextStyle(fontStyle: FontStyle.italic),
-                  ),
-                ),
-                DataColumn(
-                  label: Text(
-                    'Email',
-                    style: TextStyle(fontStyle: FontStyle.italic),
-                  ),
-                ),
-                DataColumn(
-                  label: Text(
-                    'Phone',
-                    style: TextStyle(fontStyle: FontStyle.italic),
-                  ),
-                ),
-              ],
-              rows: litems
-                  .map(
-                    (student) => DataRow(
-                        // onSelectChanged: (b) {
-                        //   print(student.id);
-                        // },
-                        cells: [
-                          DataCell(Text(student.id.toString())),
-                          DataCell(
-                            Text(student.fname),
-                          ),
-                          DataCell(Text(student.lname)),
-                          DataCell(
-                            Text(student.email),
-                          ),
-                          DataCell(
-                            Text(student.phone.toString()),
-                          ),
-                        ]),
-                  )
-                  .toList(),
-            ),
-          )
+              );
+            },
+          ),
+
+          // SingleChildScrollView(
+          //   scrollDirection: Axis.horizontal,
+          //   child: DataTable(
+          //     columns: const <DataColumn>[
+          //       DataColumn(
+          //         label: Text(
+          //           'Sr No',
+          //           style: TextStyle(fontStyle: FontStyle.italic),
+          //         ),
+          //       ),
+          //       DataColumn(
+          //         label: Text(
+          //           'FirstName',
+          //           style: TextStyle(fontStyle: FontStyle.italic),
+          //         ),
+          //       ),
+          //       DataColumn(
+          //         label: Text(
+          //           'LastName',
+          //           style: TextStyle(fontStyle: FontStyle.italic),
+          //         ),
+          //       ),
+          //       DataColumn(
+          //         label: Text(
+          //           'Email',
+          //           style: TextStyle(fontStyle: FontStyle.italic),
+          //         ),
+          //       ),
+          //       DataColumn(
+          //         label: Text(
+          //           'Phone',
+          //           style: TextStyle(fontStyle: FontStyle.italic),
+          //         ),
+          //       ),
+          //     ],
+          //     rows: litems
+          //         .map(
+          //           (student) => DataRow(
+          //               // onSelectChanged: (b) {
+          //               //   print(student.id);
+          //               // },
+          //               cells: [
+          //                 DataCell(Text(student.id.toString())),
+          //                 DataCell(
+          //                   Text(student.fname),
+          //                 ),
+          //                 DataCell(Text(student.lname)),
+          //                 DataCell(
+          //                   Text(student.email),
+          //                 ),
+          //                 DataCell(
+          //                   Text(student.phone.toString()),
+          //                 ),
+          //               ]),
+          //         )
+          //         .toList(),
+          //   ),
+          // )
         ]),
       ),
     );
