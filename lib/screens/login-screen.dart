@@ -67,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 obscureText: true,
                                 keyboardType: TextInputType.text,
                                 validator: (item) {
-                                  return item.length > 0
+                                  return item.length > 6
                                       ? null
                                       : "Password must be 6 characters";
                                 },
@@ -102,6 +102,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             SizedBox(
                               height: 10,
                             ),
+                            Container(
+                              padding: EdgeInsets.all(5),
+                              color: Colors.blue[200],
+                              child: Text(
+                                  "Use admin@yopmail.com and admin123 as credentials"),
+                            )
                           ],
                         )),
                   ),
@@ -112,18 +118,16 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   bool validateCred(String email, String password) {
-    return _email == "@" && _password == "a";
+    return _email == "@amdin.yopmail.com" && _password == "admin123";
   }
 
   void login() {
     if (_formkey.currentState.validate()) {
-      setState(() {
-        isLoading = true;
-      });
-
+      print(validateCred(_email, _password));
       if (validateCred(_email, _password)) {
-        // _scaffoldKey.currentState
-        //     .showSnackBar(snackbar);
+        setState(() {
+          isLoading = true;
+        });
         showToast(
           "✓ Login Successfull",
           duration: Duration(seconds: 2),
@@ -137,16 +141,17 @@ class _LoginScreenState extends State<LoginScreen> {
             context,
             MaterialPageRoute(builder: (_) => MyHomePage(title: 'HOME')),
             (Route<dynamic> route) => false);
+      } else {
+        showToast(
+          "X Invalid Credentials",
+          context: context,
+          duration: Duration(seconds: 2),
+          position: ToastPosition.bottom,
+          backgroundColor: Colors.red.withOpacity(0.8),
+          radius: 13.0,
+          textStyle: TextStyle(fontSize: 18.0),
+        );
       }
-    } else {
-      showToast(
-        "X Invalid Credentials",
-        duration: Duration(seconds: 2),
-        position: ToastPosition.bottom,
-        backgroundColor: Colors.red.withOpacity(0.8),
-        radius: 13.0,
-        textStyle: TextStyle(fontSize: 18.0),
-      );
     }
   }
 }
