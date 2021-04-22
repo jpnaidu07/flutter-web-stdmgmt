@@ -6,6 +6,9 @@ import 'package:flutter_std_mgmt/screens/student-list.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:oktoast/oktoast.dart';
 
+final graphqlEndpoint = 'http://192.168.0.101:8085/v1/graphql';
+final subscriptionEndpoint = 'ws://192.168.0.101:8085/v1/graphql';
+
 void main() async {
   await initHiveForFlutter();
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,8 +34,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OKToast(
-      child: GraphQLProvider(
-        client: Config.initailizeClient("abc"),
+      child: ClientProvider(
+        uri: graphqlEndpoint,
+        subscriptionUri: subscriptionEndpoint,
         child: MaterialApp(
             title: 'STUDENT MANAGEMENT',
             debugShowCheckedModeBanner: false,

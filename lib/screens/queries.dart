@@ -1,3 +1,5 @@
+import 'package:graphql_flutter/graphql_flutter.dart';
+
 class Queries {
   static String studentList = """query MyQuery {
   studs:stdapp_students {
@@ -20,4 +22,19 @@ class Queries {
     phone
   }
 }""";
+
+  static final subStuList = gql(
+    r'''
+    subscription MyQuery {
+  studs:stdapp_students {
+    id
+    department
+    email
+    fname
+    lname
+    phone
+  }
+}
+  ''',
+  );
 }

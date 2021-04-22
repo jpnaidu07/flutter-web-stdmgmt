@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_std_mgmt/screens/student-list.dart';
+import 'package:flutter_std_mgmt/screens/student-model.dart';
 import 'package:oktoast/oktoast.dart';
 
 class NewStudent extends StatefulWidget {
