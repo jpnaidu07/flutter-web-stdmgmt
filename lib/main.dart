@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_std_mgmt/screens/client.dart';
 import 'package:flutter_std_mgmt/screens/common-utils.dart';
 import 'package:flutter_std_mgmt/screens/login-screen.dart';
-import 'package:flutter_std_mgmt/screens/student-list.dart';
+import 'package:flutter_std_mgmt/screens/student-list-cards.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:oktoast/oktoast.dart';
 
-final graphqlEndpoint = 'http://192.168.0.101:8085/v1/graphql';
-final subscriptionEndpoint = 'ws://192.168.0.101:8085/v1/graphql';
+final graphqlEndpoint = 'http://localhost:8085/v1/graphql';
+final subscriptionEndpoint = 'ws://localhost:8085/v1/graphql';
 
 void main() async {
   await initHiveForFlutter();

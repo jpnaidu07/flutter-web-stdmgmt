@@ -118,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   bool validateCred(String email, String password) {
-    return _email == "@amdin.yopmail.com" && _password == "admin123";
+    return _email == "admin@yopmail.com" && _password == "admin123";
   }
 
   void login() {
